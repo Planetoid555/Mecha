@@ -373,6 +373,7 @@ MonoBehaviour:
   height: 10
   tile: {fileID: 8338922333812706941, guid: e1c7516f52e805345a4ca57d9a373407, type: 3}
   cam: {fileID: 519420032}
+  player: {fileID: 1426401672725757358, guid: b22c8e079a5be8949981b683d05ccc05, type: 3}
 --- !u!4 &1299573602
 Transform:
   m_ObjectHideFlags: 0
