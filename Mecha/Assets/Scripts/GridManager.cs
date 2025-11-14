@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -7,14 +8,14 @@ public class GridManager : MonoBehaviour
     public Tile tile;
     [SerializeField] private Transform cam;
     private Dictionary<Vector2, Tile> tileDict;
-    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject mecha;
     private GameObject selectedMecha;
     private Mecha mechaScript;
+    private GameObject spawnedMecha;
     
     void Start()
     {
         MakeGrid();
-        player.GetComponent<Mecha>().SetManager(this);
     }
     void MakeGrid()
     {
@@ -32,7 +33,8 @@ public class GridManager : MonoBehaviour
                 tileDict[new Vector2(col, row)] = spawnedTile;
             }
         }
-        Instantiate(player, new Vector3(0, 0), Quaternion.identity);
+        spawnedMecha = Instantiate(mecha, new Vector3(0, 0), Quaternion.identity);
+        spawnedMecha.GetComponent<Mecha>().SetManager(this);
         cam.transform.position = new Vector3((float)width / 2 - .5f, (float)height / 2 - .5f, -10);
     }
 
@@ -45,23 +47,22 @@ public class GridManager : MonoBehaviour
         return null;
     }
 
-    public void selectMecha(GameObject mecha)
+    public void selectMecha(GameObject selected)
     {
         if (selectedMecha != null)
         {
             mechaScript.Selection(false);
         }
-        selectedMecha = mecha;
+        selectedMecha = selected;
         mechaScript = selectedMecha.GetComponent<Mecha>();
     }
 
     public void moveMecha(Vector3 pos)
     {
-        selectedMecha.transform.position = new Vector3((int)pos.x, (int)pos.y, 0);
+        int manhattan = (int) Math.Sqrt((selectedMecha.transform.position.x - pos.x) * (selectedMecha.transform.position.x - pos.x) + (selectedMecha.transform.position.y - pos.y) * (selectedMecha.transform.position.y - pos.y));
+        if (mechaScript.getSpeed() > manhattan)
+        {
+            selectedMecha.transform.position = new Vector3((int)(pos.x + .5), (int)(pos.y + .5), pos.z);
+        }
     }
-    public void moveMecha(Vector2 pos)
-    {
-        selectedMecha.transform.position = new Vector3((int)pos.x, (int)pos.y, 0);
-    }
-    
 }
