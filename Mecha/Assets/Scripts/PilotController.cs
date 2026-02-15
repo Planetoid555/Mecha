@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PilotControl : MonoBehaviour
+public class PilotController : MonoBehaviour
 {
     public float xSens;
     public float ySens;
@@ -10,6 +10,7 @@ public class PilotControl : MonoBehaviour
 
     private Transform transPilot;
     private Rigidbody rigidPilot;
+    private bool canMove; //is pilot movement enabled
 
     float xRotate;
     float yRotate;
@@ -24,11 +25,12 @@ public class PilotControl : MonoBehaviour
         Cursor.visible = false;
         transPilot = GetComponent<Transform>();
         rigidPilot = GetComponent<Rigidbody>();
+        canMove = true;
     }
 
     private void Update()
     {
-        //
+        //Input Maxxing
         float xMouse = Input.GetAxisRaw("Mouse X") * Time.deltaTime * xSens;
         float yMouse = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * ySens;
         horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -43,12 +45,20 @@ public class PilotControl : MonoBehaviour
 
     private void FixedUpdate()
     {
-        MovePilot();
+        if(canMove)
+        {
+            MovePilot();
+        }
     }
 
     private void MovePilot()
     {
         moveDirection = transPilot.forward * verticalInput + transPilot.right * horizontalInput;
         rigidPilot.AddForce(moveDirection.normalized * pilotSpeed, ForceMode.Force);
+    }
+
+    public void SetPilotMovement(bool moveState)
+    {
+        canMove = moveState;
     }
 }
