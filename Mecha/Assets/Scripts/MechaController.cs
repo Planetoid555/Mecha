@@ -4,6 +4,7 @@ public class MechaController : MonoBehaviour
 {
     public float xSens;
     public float ySens;
+    public Transform mechaCamera;
 
     [SerializeField] float mechaSpeed;
 
@@ -34,28 +35,18 @@ public class MechaController : MonoBehaviour
         verticalInput = Input.GetAxisRaw("Vertical");
         yRotate += xMouse;
         xRotate -= yMouse;
-        xRotate = Mathf.Clamp(xRotate, -90f, 90f);
+        xRotate = Mathf.Clamp(xRotate, -70f, 70f);
         transMecha.rotation = Quaternion.Euler(0, yRotate, 0);
+        mechaCamera.rotation = Quaternion.Euler(xRotate, yRotate, 0);
     }
 
     private void FixedUpdate()
     {
-        if(canMove)
-        {
-            MoveMecha();
-        }
+        if(!canMove) return;
+        Vector3 move = (transMecha.forward * verticalInput + transMecha.right * horizontalInput).normalized;
+        rigidMecha.linearVelocity = new Vector3(move.x * mechaSpeed, rigidMecha.linearVelocity.y, move.z * mechaSpeed);
     }
 
-    private void MoveMecha()
-    {
-        moveDirection = (transMecha.forward * verticalInput + transMecha.right * horizontalInput).normalized;
-
-        Vector3 velocity = moveDirection * mechaSpeed;
-    
-        velocity.y = rigidMecha.linearVelocity.y;
-    
-        rigidMecha.linearVelocity = velocity;;
-    }
 
     public void SetMechaMovement(bool moveState)
     {

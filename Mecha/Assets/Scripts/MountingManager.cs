@@ -6,8 +6,7 @@ public class MountingManager : MonoBehaviour
     private bool inMech;
 
     [SerializeField] Transform pilotSeat;
-    [SerializeField] Transform dropOff;
-    [SerializeField] GameObject assignedMech;
+    [SerializeField] GameObject mechaHatch;
 
     private GameObject player;
 
@@ -29,7 +28,7 @@ public class MountingManager : MonoBehaviour
     }
     void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player") && !inMech)
         {
             inZone = false;
             player = null;
@@ -46,16 +45,17 @@ public class MountingManager : MonoBehaviour
                 player.transform.SetParent(pilotSeat);
                 player.transform.localPosition = Vector3.zero;
                 player.transform.localRotation = Quaternion.identity;
-                assignedMech.GetComponent<MechaController>().enabled = true;
-                assignedMech.GetComponent<MechaController>().SetMechaMovement(true);
+                gameObject.GetComponent<MechaController>().enabled = true;
+                gameObject.GetComponent<MechaController>().SetMechaMovement(true);
+                mechaHatch.SetActive(true);
                 inMech = true;
             } else
             {
                 player.GetComponent<PilotController>().SetPilotMovement(true);
                 player.transform.SetParent(null);
-                player.transform.localPosition = dropOff.position;
-                assignedMech.GetComponent<MechaController>().enabled = false;
-                assignedMech.GetComponent<MechaController>().SetMechaMovement(false);
+                gameObject.GetComponent<MechaController>().enabled = false;
+                gameObject.GetComponent<MechaController>().SetMechaMovement(false);
+                mechaHatch.SetActive(false);
                 inMech = false;
             }
         }
